@@ -1,0 +1,6 @@
+{
+  "version": 2,
+  "outputDirectory": "猫目录",
+  "cleanUrls": true,
+  "trailingSlash": false
+}

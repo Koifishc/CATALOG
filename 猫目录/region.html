@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>世界猫图鉴 | 地区详情</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="hero hero--small">
+    <div class="hero__inner">
+      <p class="kicker">Region Details</p>
+      <h1 id="region-title">地区信息</h1>
+      <p class="subtitle" id="region-intro">正在加载该地区猫的信息...</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <a class="back-link" href="index.html">← 返回首页</a>
+    <section id="cat-list" class="cat-grid"></section>
+  </main>
+
+  <script src="data.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const key = params.get("area");
+    const selected = CAT_DATA.regions[key];
+
+    const titleEl = document.getElementById("region-title");
+    const introEl = document.getElementById("region-intro");
+    const listEl = document.getElementById("cat-list");
+
+    if (!selected) {
+      titleEl.textContent = "未找到地区";
+      introEl.textContent = "请返回首页重新选择地区。";
+      listEl.innerHTML = '<article class="cat-card"><h3>提示</h3><p>参数无效或缺失。</p></article>';
+    } else {
+      titleEl.textContent = selected.name + "的猫品种与习性";
+      introEl.textContent = selected.intro;
+      listEl.innerHTML = selected.cats
+        .map((id) => {
+          const cat = CAT_DATA.breeds[id];
+          return `
+            <article class="cat-card">
+              <h3>${cat.name}</h3>
+              <p>${cat.habit}</p>
+              <a class="detail-link" href="breed.html?id=${id}">查看更多信息</a>
+            </article>
+          `;
+        })
+        .join("");
+    }
+  </script>
+</body>
+</html>

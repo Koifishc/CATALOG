@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>世界猫图鉴 | 品种详情</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="hero hero--small">
+    <div class="hero__inner">
+      <p class="kicker">Breed Details</p>
+      <h1 id="breed-title">品种详情</h1>
+      <p class="subtitle" id="breed-subtitle">正在加载...</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <a class="back-link" href="javascript:history.back()">← 返回上一级</a>
+    <section class="detail-panel" id="breed-detail"></section>
+  </main>
+
+  <div id="image-modal" class="image-modal" hidden>
+    <div class="image-modal__backdrop" id="image-modal-backdrop"></div>
+    <div class="image-modal__dialog">
+      <button type="button" class="image-modal__close" id="image-modal-close" aria-label="关闭大图">×</button>
+      <img id="image-modal-photo" class="image-modal__photo" alt="猫品种大图" />
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script>
+    async function getWikipediaThumbnail(wikiUrl) {
+      const timeoutMs = 4500;
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        const title = decodeURIComponent(wikiUrl.split("/wiki/")[1] || "");
+        if (!title) return null;
+        const apiUrl = "https://en.wikipedia.org/api/rest_v1/page/summary/" + encodeURIComponent(title);
+        const response = await fetch(apiUrl, { signal: controller.signal });
+        if (!response.ok) return null;
+        const payload = await response.json();
+        return payload.thumbnail && payload.thumbnail.source ? payload.thumbnail.source : null;
+      } catch (error) {
+        return null;
+      } finally {
+        clearTimeout(timeoutId);
+      }
+    }
+
+    async function renderBreedPage() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("id");
+      const breed = CAT_DATA.breeds[id];
+
+      const titleEl = document.getElementById("breed-title");
+      const subtitleEl = document.getElementById("breed-subtitle");
+      const detailEl = document.getElementById("breed-detail");
+
+      if (!breed) {
+        titleEl.textContent = "未找到品种";
+        subtitleEl.textContent = "请返回地区页面重新选择。";
+        detailEl.innerHTML = "<p>参数无效或缺失。</p>";
+      } else {
+        titleEl.textContent = breed.name;
+        subtitleEl.textContent = "详细信息参考相关 Wikipedia 词条整理。";
+        detailEl.innerHTML = `
+          <div class="detail-layout">
+            <div class="detail-text">
+              <h2>基础信息</h2>
+              <p><strong>起源地区：</strong>${breed.origin}</p>
+              <p><strong>典型习性：</strong>${breed.habit}</p>
+              <p><strong>性格特点：</strong>${breed.personality}</p>
+              <p><strong>外观特征：</strong>${breed.features}</p>
+              <p><strong>Wikipedia：</strong><a href="${breed.wiki}" target="_blank" rel="noopener noreferrer">查看词条</a></p>
+            </div>
+            <figure class="breed-photo-wrap">
+              <img id="breed-photo" class="breed-photo" alt="${breed.name} 图片" loading="lazy" />
+              <figcaption id="breed-photo-caption" class="photo-caption">正在加载图片...</figcaption>
+              <button id="open-image-modal" class="open-image-modal" type="button" hidden>查看大图</button>
+            </figure>
+          </div>
+        `;
+
+        const photoEl = document.getElementById("breed-photo");
+        const captionEl = document.getElementById("breed-photo-caption");
+        const openModalBtn = document.getElementById("open-image-modal");
+        const imageUrl = await getWikipediaThumbnail(breed.wiki);
+        if (imageUrl) {
+          captionEl.textContent = "正在加载图片...";
+          photoEl.addEventListener("load", () => {
+            captionEl.textContent = "图片来源：Wikipedia";
+          }, { once: true });
+          photoEl.addEventListener("error", () => {
+            photoEl.remove();
+            openModalBtn.remove();
+            captionEl.textContent = "图片加载失败，请点击 Wikipedia 查看。";
+          }, { once: true });
+          photoEl.src = imageUrl;
+          photoEl.style.display = "block";
+          openModalBtn.hidden = false;
+          openModalBtn.addEventListener("click", () => {
+            openImageModal(imageUrl, breed.name + " 大图");
+          });
+        } else {
+          photoEl.remove();
+          openModalBtn.remove();
+          captionEl.textContent = "暂时无法加载该品种图片，请点击 Wikipedia 查看。";
+        }
+      }
+    }
+
+    function openImageModal(src, alt) {
+      const modal = document.getElementById("image-modal");
+      const modalPhoto = document.getElementById("image-modal-photo");
+      modalPhoto.src = src;
+      modalPhoto.alt = alt;
+      modal.hidden = false;
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeImageModal() {
+      const modal = document.getElementById("image-modal");
+      const modalPhoto = document.getElementById("image-modal-photo");
+      modal.hidden = true;
+      modalPhoto.src = "";
+      document.body.style.overflow = "";
+    }
+
+    document.getElementById("image-modal-close").addEventListener("click", closeImageModal);
+    document.getElementById("image-modal-backdrop").addEventListener("click", closeImageModal);
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeImageModal();
+    });
+
+    renderBreedPage();
+  </script>
+</body>
+</html>
