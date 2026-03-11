@@ -10,39 +10,53 @@
   <header class="hero">
     <div class="hero__inner">
       <p class="kicker">CATALOG</p>
-      <h1>了解世界各地区的猫品种和习性</h1>
-      <p class="subtitle">从北美到中东，按地区探索具有代表性的猫。</p>
+      <h1 class="hero-title">了解世界各地区的猫品种和习性</h1>
     </div>
   </header>
 
   <main class="container">
     <section>
-      <h2>选择地区</h2>
-      <div class="region-grid">
-        <a class="region-card" href="region.html?area=north-america">
-          <h3>北美</h3>
-          <p>缅因猫、美国短毛猫等。</p>
-        </a>
-        <a class="region-card" href="region.html?area=south-america">
-          <h3>南美</h3>
-          <p>本地家猫与自然适应型猫群。</p>
-        </a>
-        <a class="region-card" href="region.html?area=asia">
-          <h3>亚洲</h3>
-          <p>暹罗猫、日本短尾猫、狸花猫等。</p>
-        </a>
-        <a class="region-card" href="region.html?area=middle-east">
-          <h3>中东</h3>
-          <p>波斯猫、安哥拉猫与沙漠适应性。</p>
-        </a>
-        <a class="region-card" href="region.html?area=africa">
-          <h3>非洲</h3>
-          <p>阿比西尼亚猫等古老血统。</p>
-        </a>
-        <a class="region-card" href="region.html?area=other">
-          <h3>其他</h3>
-          <p>欧洲与大洋洲代表品种。</p>
-        </a>
+      <p class="section-intro">点击世界地图上的大洲，查看该地区代表猫品种。</p>
+      <h2>世界地图入口</h2>
+
+      <div class="map-panel">
+        <div class="world-map-wrap">
+          <img
+            class="world-map-photo"
+            src="https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg"
+            alt="按大洲划分的世界地图，点击可进入对应地区猫品种页面"
+            loading="lazy"
+            referrerpolicy="no-referrer"
+          />
+
+          <a href="region.html?area=north-america" class="map-hotspot hotspot-na" aria-label="进入北美洲">
+            <span>北美洲</span>
+          </a>
+          <a href="region.html?area=south-america" class="map-hotspot hotspot-sa" aria-label="进入南美洲">
+            <span>南美洲</span>
+          </a>
+          <a href="region.html?area=europe" class="map-hotspot hotspot-eu" aria-label="进入欧洲">
+            <span>欧洲</span>
+          </a>
+          <a href="region.html?area=africa" class="map-hotspot hotspot-af" aria-label="进入非洲">
+            <span>非洲</span>
+          </a>
+          <a href="region.html?area=asia" class="map-hotspot hotspot-asia" aria-label="进入亚洲">
+            <span>亚洲</span>
+          </a>
+          <a href="region.html?area=oceania" class="map-hotspot hotspot-oc" aria-label="进入大洋洲">
+            <span>大洋洲</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="continent-links">
+        <a href="region.html?area=asia">亚洲</a>
+        <a href="region.html?area=europe">欧洲</a>
+        <a href="region.html?area=south-america">南美洲</a>
+        <a href="region.html?area=north-america">北美洲</a>
+        <a href="region.html?area=africa">非洲</a>
+        <a href="region.html?area=oceania">大洋洲</a>
       </div>
     </section>
   </main>
